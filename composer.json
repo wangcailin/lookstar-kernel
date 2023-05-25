@@ -11,9 +11,9 @@
     "php": "^8.1",
     "alibabacloud/devops-20210625": "2.1.6",
     "alibabacloud/dysmsapi-20170525": "2.0.23",
-    "bluedot/composer": "3.1.7",
-    "hubspot/api-client": "^8.1",
-    "stancl/tenancy": "3.5.7",
+    "bluedot/composer": "^3.4.3",
+    "hubspot/api-client": "^8.4.1",
+    "stancl/tenancy": "^3.7",
     "tencent-ad/marketing-api-php-sdk": "^1.1"
   },
   "autoload": {
