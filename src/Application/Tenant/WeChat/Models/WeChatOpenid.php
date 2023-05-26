@@ -2,7 +2,7 @@
 
 namespace LookstarKernel\Application\Tenant\WeChat\Models;
 
-use Composer\Application\User\Models\UserWeChatOpenid;
+use Composer\Application\WeChat\Models\WeChatOpenid as UserWeChatOpenid;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 use LookstarKernel\Application\Tenant\WeChat\Models\WeChatAuthorizer;
 
