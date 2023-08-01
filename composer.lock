@@ -594,11 +594,11 @@
         },
         {
             "name": "bluedot/composer",
-            "version": "3.4.9",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://gitee.com/blue-dot-cn_cailin__wang/bluedot-composer.git",
-                "reference": "241529466b8fa83e6873376314e3b0d437678681"
+                "reference": "0acab458149bfc8f323f1e65076da325acd9ab7d"
             },
             "require": {
                 "aliyuncs/oss-sdk-php": "^2.6",
