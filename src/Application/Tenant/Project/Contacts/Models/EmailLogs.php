@@ -1,6 +1,6 @@
 <?php
 
-namespace LookstarKernel\Application\Tenant\Project\Contacts\Push\Models;
+namespace LookstarKernel\Application\Tenant\Project\Contacts\Models;
 
 use LookstarKernel\Support\Eloquent\TenantModel as Model;
 
