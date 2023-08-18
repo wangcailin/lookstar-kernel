@@ -6,5 +6,5 @@ use LookstarKernel\Support\Eloquent\TenantModel as Model;
 
 class Contacts extends Model
 {
-    protected $table = 'tenant_forms_contacts';
+    protected $table = 'tenant_project_contacts';
 }
