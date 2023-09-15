@@ -18,6 +18,7 @@ class Conversation extends Model
         'result',
         'source_documents',
         'type',
+        'openid',
     ];
     protected $casts = [
         'source_documents' => 'json',
