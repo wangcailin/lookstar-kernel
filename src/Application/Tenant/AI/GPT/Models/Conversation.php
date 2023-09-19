@@ -10,6 +10,7 @@ class Conversation extends Model
 
     const TYPE_VMS = 'vms';
     const TYPE_CHATGPT = 'ChatGPT';
+    const TYPE_SALES_GPT = 'SalesGPT';
     public static $excludedResult = ['无法回答该问题。'];
     protected $fillable = [
         'tenant_id',
