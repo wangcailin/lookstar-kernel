@@ -10,4 +10,9 @@ class WeChatAuthorizer extends Authorizer
     use BelongsToTenant;
 
     protected $table = 'tenant_wechat_authorizer';
+
+    public function reply()
+    {
+        return $this->hasOne(WeChatAIReply::class, 'appid', 'appid');
+    }
 }
