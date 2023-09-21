@@ -42,9 +42,11 @@ class ConversationService
                 $data = $contents;
                 break;
             case Project::TYPE_SALES:
-                $response = $contents[count($contents) - 1] ?? '';
-                $data['answer'] = explode(':', $response)[1] ?? '';
-                $data['source_documents'] = [];
+                if (is_array($contents)) {
+                    $response = $contents[count($contents) - 1] ?? '';
+                    $data['answer'] = explode(':', $response)[1] ?? '';
+                    $data['source_documents'] = [];
+                }
                 break;
         }
         return $data;

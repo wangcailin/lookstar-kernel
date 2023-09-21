@@ -4,6 +4,8 @@ namespace LookstarKernel\Support\AI;
 
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\RequestException;
 
 class ApiClient
 {
@@ -23,14 +25,22 @@ class ApiClient
 
     public static function post($path, $data, $header = ['Content-Type' => 'application/json',])
     {
-        $response = Http::timeout(60)->withHeaders($header)->post(
-            self::$domain . $path,
-            $data
-        );
-        if ($response->successful()) {
-            return $response->json();
-        } else {
-            return false;
+        try {
+            $response = Http::timeout(60)->withHeaders($header)->post(
+                self::$domain . $path,
+                $data
+            );
+            if ($response->successful()) {
+                return $response->json();
+            } else {
+                return false;
+            }
+        } catch (RequestException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $errorResponse = $e->getResponse()->getBody()->getContents();
+            Log::info('******************************************************************');
+            Log::info($errorResponse);
+            Log::info('******************************************************************');
         }
     }
 
