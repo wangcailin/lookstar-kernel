@@ -112,7 +112,7 @@ class ConversationService
     private function getSalesPromptArr($promptConfigData, $data)
     {
         $prompts = [];
-        $fields = ['sales_conversation_chain_prompt', 'stage_analyzer_chain_prompt', 'company_name', 'company_business', 'conversation_purpose', 'salesperson_role', 'company_values', 'salesperson_name'];
+        $fields = ['sales_conversation_chain_prompt', 'stage_analyzer_chain_prompt', 'company_name', 'company_business', 'conversation_purpose', 'salesperson_role', 'company_service', 'salesperson_name', 'conversation_stages'];
         foreach ($fields as $field) {
             $prompts[$field] = $promptConfigData[$field] ?? '';
         }
