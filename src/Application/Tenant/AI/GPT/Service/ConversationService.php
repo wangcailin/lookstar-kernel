@@ -44,7 +44,7 @@ class ConversationService
             case Project::TYPE_SALES:
                 if (is_array($contents)) {
                     $response = $contents[count($contents) - 1] ?? '';
-                    $data['answer'] = explode(':', $response)[1] ?? '';
+                    $data['answer'] = trim(explode(':', $response)[1] ?? '');
                     $data['source_documents'] = [];
                 }
                 break;
