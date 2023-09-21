@@ -116,7 +116,7 @@ class ConversationService
         foreach ($fields as $field) {
             $prompts[$field] = $promptConfigData[$field] ?? '';
         }
-        $prompts['conversation_stage_id'] = count($data['chat_history'] ?? []) + 1;
+        // $prompts['conversation_stage_id'] = count($data['chat_history'] ?? []) + 1;
         return $prompts;
     }
 
