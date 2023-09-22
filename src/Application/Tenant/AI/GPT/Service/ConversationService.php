@@ -7,6 +7,7 @@ use LookstarKernel\Application\Tenant\AI\GPT\Models\Project;
 
 class ConversationService
 {
+    public $explodeSalesGPT = 'User：';
     /**
      * 根据项目类型获得项目请求的url
      *
@@ -44,7 +45,7 @@ class ConversationService
             case Project::TYPE_SALES:
                 if (is_array($contents)) {
                     $response = $contents[count($contents) - 1] ?? '';
-                    $data['answer'] = trim(explode(':', $response)[1] ?? '');
+                    $data['answer'] = trim(explode($this->explodeSalesGPT, $response)[1] ?? '');
                     $data['source_documents'] = [];
                 }
                 break;
@@ -74,7 +75,7 @@ class ConversationService
                 $salespersonRole = $config['data']['salesperson_name'] ?? '';
                 foreach ($chatHistories as $chatHistory) {
                     if ($chatHistory && (count($chatHistory) == 2)) {
-                        $history[] = 'User:' . $chatHistory[0];
+                        $history[] = $this->explodeSalesGPT . $chatHistory[0];
                         $history[] = $salespersonRole . ':' . $chatHistory[1];
                     }
                 }
