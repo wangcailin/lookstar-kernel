@@ -48,6 +48,7 @@ class AIResponse implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::info('start');
         $this->aiReply = WeChatAIReply::where(['appid' => $this->appId, 'state' => 1])->with('project')->first();
         $this->promptConfig = PromptConfig::where('project_id', $this->aiReply['project_id'])->first();
         $this->service = new ConversationService($this->promptConfig);
