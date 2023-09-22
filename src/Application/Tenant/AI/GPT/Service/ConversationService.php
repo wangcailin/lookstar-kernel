@@ -98,7 +98,7 @@ class ConversationService
      * @param data $data
      * @return void
      */
-    public function getProjectPrompt(Project $project, $data = [])
+    public function getProjectPrompt(Project $project)
     {
         $prompt = '';
         switch ($project['type']) {
@@ -106,7 +106,7 @@ class ConversationService
                 $prompt = $this->getWechatPromptString($this->promptConfig['data'] ?? []);
                 break;
             case Project::TYPE_SALES:
-                $prompt = $this->getSalesPromptArr($this->promptConfig['data'] ?? [], $data);
+                $prompt = $this->getSalesPromptArr($this->promptConfig['data'] ?? []);
                 break;
         }
         return $prompt;
