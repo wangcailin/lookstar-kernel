@@ -9,6 +9,12 @@ class ConversationService
 {
     public $saleUserPrefix = 'User：';
     public $explodeSalesGPT = '：';
+
+    public $promptConfig;
+    public function __construct($promptConfig)
+    {
+        $this->promptConfig = $promptConfig;
+    }
     /**
      * 根据项目类型获得项目请求的url
      *
@@ -36,9 +42,9 @@ class ConversationService
      * @param [type] $contents
      * @return void
      */
-    public function formatContent($type, $contents, $config = [])
+    public function formatContent($type, $contents)
     {
-        $salespersonRole = $config['data']['salesperson_name'] ?? '';
+        $salespersonRole = $this->promptConfig['data']['salesperson_name'] ?? '';
         $data = [];
         switch ($type) {
             case Project::TYPE_WECHAT:
@@ -59,14 +65,13 @@ class ConversationService
      * 获得项目历史记录
      *
      * @param [type] $type
-     * @param PromptConfig $config
      * @param [type] $chatHistories
      * @return void
      */
-    public function getProjectChatHistory($type, PromptConfig $config, $chatHistories)
+    public function getProjectChatHistory($type, $chatHistories)
     {
         $history = [];
-        if (!($config['is_chat_history'] ?? '')) {
+        if (!($this->promptConfig['is_chat_history'] ?? '')) {
             return $history;
         }
         switch ($type) {
@@ -74,7 +79,7 @@ class ConversationService
                 $history = $chatHistories;
                 break;
             case Project::TYPE_SALES:
-                $salespersonRole = $config['data']['salesperson_name'] ?? '';
+                $salespersonRole = $this->promptConfig['data']['salesperson_name'] ?? '';
                 foreach ($chatHistories as $chatHistory) {
                     if ($chatHistory && (count($chatHistory) == 2)) {
                         $history[] = $this->saleUserPrefix . $chatHistory[0];
@@ -90,19 +95,18 @@ class ConversationService
      * 根据项目类型获得prompt
      *
      * @param Project $project
-     * @param PromptConfig $projectConfig
      * @param data $data
      * @return void
      */
-    public function getProjectPrompt(Project $project, PromptConfig $promptConfig, $data = [])
+    public function getProjectPrompt(Project $project, $data = [])
     {
         $prompt = '';
         switch ($project['type']) {
             case Project::TYPE_WECHAT:
-                $prompt = $this->getWechatPromptString($promptConfig['data'] ?? []);
+                $prompt = $this->getWechatPromptString($this->promptConfig['data'] ?? []);
                 break;
             case Project::TYPE_SALES:
-                $prompt = $this->getSalesPromptArr($promptConfig['data'] ?? [], $data);
+                $prompt = $this->getSalesPromptArr($this->promptConfig['data'] ?? [], $data);
                 break;
         }
         return $prompt;
@@ -114,14 +118,13 @@ class ConversationService
      * @param [type] $promptConfigData
      * @return void
      */
-    private function getSalesPromptArr($promptConfigData, $data)
+    private function getSalesPromptArr($promptConfigData)
     {
         $prompts = [];
         $fields = ['sales_conversation_chain_prompt', 'stage_analyzer_chain_prompt', 'company_name', 'company_business', 'conversation_purpose', 'salesperson_role', 'company_service', 'salesperson_name', 'conversation_stages'];
         foreach ($fields as $field) {
             $prompts[$field] = $promptConfigData[$field] ?? '';
         }
-        // $prompts['conversation_stage_id'] = count($data['chat_history'] ?? []) + 1;
         return $prompts;
     }
 
