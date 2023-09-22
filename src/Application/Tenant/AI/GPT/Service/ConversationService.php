@@ -36,8 +36,9 @@ class ConversationService
      * @param [type] $contents
      * @return void
      */
-    public function formatContent($type, $contents)
+    public function formatContent($type, $contents, $config = [])
     {
+        $salespersonRole = $config['data']['salesperson_name'] ?? '';
         $data = [];
         switch ($type) {
             case Project::TYPE_WECHAT:
@@ -46,7 +47,7 @@ class ConversationService
             case Project::TYPE_SALES:
                 if (is_array($contents)) {
                     $response = $contents[count($contents) - 1] ?? '';
-                    $data['answer'] = trim(explode($this->explodeSalesGPT, $response)[1] ?? '');
+                    $data['answer'] = trim(explode($salespersonRole . $this->explodeSalesGPT, $response)[1] ?? '');
                     $data['source_documents'] = [];
                 }
                 break;
