@@ -7,7 +7,7 @@ use LookstarKernel\Application\Tenant\AI\GPT\Models\Project;
 
 class ConversationService
 {
-    public $explodeSalesGPT = 'User：';
+    public $explodeSalesGPT = '：';
     /**
      * 根据项目类型获得项目请求的url
      *
