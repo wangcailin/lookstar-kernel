@@ -41,8 +41,6 @@ class AIResponse implements ShouldQueue
         $this->openid = $openid;
         $this->text = $text;
         $this->tenantId = $tenantId;
-        $this->aiReply = WeChatAIReply::where(['appid' => $this->appId, 'state' => 1])->with('project')->first();
-        $this->promptConfig = PromptConfig::where('project_id', $this->aiReply['project_id'])->first();
     }
 
     /**
@@ -50,6 +48,8 @@ class AIResponse implements ShouldQueue
      */
     public function handle(): void
     {
+        $this->aiReply = WeChatAIReply::where(['appid' => $this->appId, 'state' => 1])->with('project')->first();
+        $this->promptConfig = PromptConfig::where('project_id', $this->aiReply['project_id'])->first();
         $this->service = new ConversationService($this->promptConfig);
         $this->api = (new Wechat())->getOfficialAccount($this->appId)->getClient();
         if (!$this->aiReply) {
@@ -66,16 +66,9 @@ class AIResponse implements ShouldQueue
                 return;
             }
             $message['text']['content'] = trim($answer);
-            //添加记录
             $this->addConversationRecord($type, $answer);
-
-            Log::info('******************************************************************');
-            Log::info($message);
-            Log::info('******************************************************************');
-            $response = $this->api->postJson('/cgi-bin/message/custom/send', $message);
+            $this->api->postJson('/cgi-bin/message/custom/send', $message);
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            exit;
             Log::error('队列任务发生错误: ' . $e->getMessage());
         }
     }
@@ -83,7 +76,7 @@ class AIResponse implements ShouldQueue
     public function getResponse($type)
     {
         if ($type == Project::TYPE_WECHAT) {
-            return $this->getWechatResponse();
+            return $this->getWeChatResponse();
         }
 
         if ($type == Project::TYPE_SALES) {
@@ -105,8 +98,7 @@ class AIResponse implements ShouldQueue
         ]);
     }
 
-
-    public function getWechatResponse()
+    public function getWeChatResponse()
     {
         $result = ApiClient::post('/app/gpt/wechat', [
             'streaming' => false,
@@ -140,7 +132,7 @@ class AIResponse implements ShouldQueue
         $timeoutMinutes = $this->promptConfig['data']['timeout_minutes'] ?? 5;
         $time = date('Y-m-d H:i:s', strtotime('now') - $timeoutMinutes * 60);
         $data = [];
-        $conversations = Conversation::where(['type' => 'sales_gpt', 'openid' => $this->openid])
+        $conversations = Conversation::where(['type' => Project::TYPE_SALES, 'openid' => $this->openid])
             ->where('created_at', '>', $time)
             ->orderBy('id', 'desc')
             ->limit(15)
