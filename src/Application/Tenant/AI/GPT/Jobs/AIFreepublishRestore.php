@@ -35,10 +35,6 @@ class AIFreepublishRestore implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info('******************************************************************');
-        Log::info($this->repositoryDataId);
-        Log::info($this->projectId);
-        Log::info('------------------------------------------------------------------');
         $this->model = RepositoryData::where('id', $this->repositoryDataId)->first();
         if ($this->model) {
             $this->model->update(['state' => 1]);
