@@ -37,8 +37,10 @@ class AIFreepublishDelete implements ShouldQueue
     {
         $this->model = RepositoryData::where('id', $this->repositoryDataId)->first();
         if ($this->model) {
-            $this->model->update(['state' => 0]);
-            $this->upload(RepositoryData::DELETE_URL);
+            if ($this->model['state'] == 1) {
+                $this->model->update(['state' => 0]);
+                $this->upload(RepositoryData::DELETE_URL);
+            }
         }
     }
 

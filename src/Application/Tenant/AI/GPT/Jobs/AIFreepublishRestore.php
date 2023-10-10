@@ -37,11 +37,13 @@ class AIFreepublishRestore implements ShouldQueue
     {
         $this->model = RepositoryData::where('id', $this->repositoryDataId)->first();
         if ($this->model) {
-            $this->model->update(['state' => 1]);
-            ApiClient::delete(RepositoryData::DELETE_URL, [
-                'repository_id' => Repository::getRepositoryId($this->projectId),
-                'id' => $this->repositoryDataId,
-            ]);
+            if ($this->model['state'] == 0) {
+                $this->model->update(['state' => 1]);
+                ApiClient::delete(RepositoryData::DELETE_URL, [
+                    'repository_id' => Repository::getRepositoryId($this->projectId),
+                    'id' => $this->repositoryDataId,
+                ]);
+            }
         }
     }
 }
