@@ -14,6 +14,7 @@ class RepositoryData extends Model
     const UPLOAD_HTML = '/app/gpt/wechat/files/html';
     const UPLOAD_FILE = '/app/gpt/wechat/files/url';
     const DELETE_URL = '/app/gpt/wechat/files/url';
+    const DELETE_FILES = '/app/gpt/wechat/files';
 
     const TRANSFORM_WORD_URL = '/app/gpt/documents/transform/word';
 
