@@ -9,22 +9,31 @@ use Illuminate\Support\Facades\Log;
 class ApiClient
 {
     public static $domain = 'https://ai.lookstar.com.cn';
+    public const HEADER_AUTHORIZATION = 'Authorization: NlBE0l4kyAOzFP/DuXEGwQ4KNS/ApmaUp9vkyZX76lw=';
+    public const HEADER_CONTENT_TYPE = 'Content-Type: application/json';
 
-    public static function ssePostStream($path, $data, $header = ['Content-Type' => 'application/json'])
+    public static $header = [
+        self::HEADER_AUTHORIZATION,
+        self::HEADER_CONTENT_TYPE,
+    ];
+
+
+    public static function ssePostStream($path, $data, $header = [])
     {
         $client = new Client();
         $response = $client->post(self::$domain . $path, [
             'stream' => true,  // This is crucial for handling the stream
-            'json' => $data
+            'json' => $data,
+            'headers' => $header ?: self::$header,
         ]);
         $stream = $response->getBody();
         return $stream;
     }
 
 
-    public static function post($path, $data, $header = ['Content-Type' => 'application/json',])
+    public static function post($path, $data, $header = [])
     {
-        $response = Http::timeout(60)->withHeaders($header)->post(
+        $response = Http::timeout(60)->withHeaders($header ?: self::$header)->post(
             self::$domain . $path,
             $data
         );
@@ -41,9 +50,9 @@ class ApiClient
         }
     }
 
-    public static function delete($path, $data, $header = ['Content-Type' => 'application/json',])
+    public static function delete($path, $data, $header = [])
     {
-        $response = Http::timeout(60)->withHeaders($header)->delete(
+        $response = Http::timeout(60)->withHeaders($header ?: self::$header)->delete(
             self::$domain . $path,
             $data
         );
