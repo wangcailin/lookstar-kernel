@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Log;
 class ApiClient
 {
     public static $domain = 'https://ai.lookstar.com.cn';
-    public const HEADER_AUTHORIZATION = 'Authorization: NlBE0l4kyAOzFP/DuXEGwQ4KNS/ApmaUp9vkyZX76lw=';
-    public const HEADER_CONTENT_TYPE = 'Content-Type: application/json';
+    public const HEADER_AUTHORIZATION = 'whHMKOHrgn90cRAFC75/6AmK+r0k12Hd02q6HAJVaaQSzpzBmeK1bUzQgBLPl9Hz';
+    public const HEADER_CONTENT_TYPE = 'application/json';
 
     public static $header = [
-        self::HEADER_AUTHORIZATION,
-        self::HEADER_CONTENT_TYPE,
+        'Authorization' => self::HEADER_AUTHORIZATION,
+        'Content-Type' => self::HEADER_CONTENT_TYPE,
     ];
 
 
