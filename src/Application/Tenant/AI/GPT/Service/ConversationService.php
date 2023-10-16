@@ -94,11 +94,10 @@ class ConversationService
     /**
      * 根据项目类型获得prompt
      *
-     * @param Project $project
-     * @param data $data
+     * @param [type] $project
      * @return void
      */
-    public function getProjectPrompt(Project $project)
+    public function getProjectPrompt($project)
     {
         $prompt = '';
         switch ($project['type']) {
