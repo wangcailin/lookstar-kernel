@@ -38,6 +38,7 @@ class ApiClient
                 return false;
             }
         } catch (ServerException $e) {
+            Log::info('WechatGPT回复报错' . $e->getMessage());
             return false; // 或者根据需要执行其他操作
         }
     }
