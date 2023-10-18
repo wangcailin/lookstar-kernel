@@ -26,8 +26,13 @@ class ApiClient
             'json' => $data,
             'headers' => $header ?: self::$header,
         ]);
-        $stream = $response->getBody();
-        return $stream;
+
+        if ($response->successful()) {
+            $stream = $response->getBody();
+            return $stream;
+        } else {
+            return false;
+        }
     }
 
 
