@@ -22,6 +22,7 @@ class ApiClient
     public static function ssePostStream($path, $data, $header = [])
     {
         try {
+            Log::info('AI WechatGPT请求回话的数据是:' . json_encode($data));
             $client = new Client();
             $response = $client->post(self::$domain . $path, [
                 'stream' => true,
