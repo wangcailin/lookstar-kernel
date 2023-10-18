@@ -4,6 +4,7 @@ namespace LookstarKernel\Support\AI;
 
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Log;
 
 class ApiClient
@@ -20,19 +21,24 @@ class ApiClient
 
     public static function ssePostStream($path, $data, $header = [])
     {
-        $client = new Client();
-        $response = $client->post(self::$domain . $path, [
-            'stream' => true,  // This is crucial for handling the stream
-            'json' => $data,
-            'headers' => $header ?: self::$header,
-        ]);
+        try {
+            $client = new Client();
+            $response = $client->post(self::$domain . $path, [
+                'stream' => true,
+                'json' => $data,
+                'headers' => $header ?: self::$header,
+            ]);
 
-        $statusCode = $response->getStatusCode();
-        if ($statusCode >= 200 && $statusCode < 300) {
-            $stream = $response->getBody();
-            return $stream;
-        } else {
-            return false;
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode >= 200 && $statusCode < 300) {
+                $stream = $response->getBody();
+                return $stream;
+            } else {
+                return false;
+            }
+        } catch (ServerException $e) {
+            return false; // 或者根据需要执行其他操作
         }
     }
 
