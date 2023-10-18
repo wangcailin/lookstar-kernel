@@ -27,7 +27,8 @@ class ApiClient
             'headers' => $header ?: self::$header,
         ]);
 
-        if ($response->successful()) {
+        $statusCode = $response->getStatusCode();
+        if ($statusCode >= 200 && $statusCode < 300) {
             $stream = $response->getBody();
             return $stream;
         } else {
