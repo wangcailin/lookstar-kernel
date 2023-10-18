@@ -144,7 +144,7 @@ class ConversationService
                     $promptConfigData[$field] = $promptConfigData['tone_other'];
                 }
                 if ($field == 'language') {
-                    if ($promptConfigData[$field] == 'Englist') {
+                    if ($promptConfigData[$field] == 'English') {
                         $promptConfigData[$field] = "请用英文回答问题";
                     }
                 }
