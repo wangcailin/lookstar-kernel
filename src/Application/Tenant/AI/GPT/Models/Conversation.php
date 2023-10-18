@@ -2,6 +2,7 @@
 
 namespace LookstarKernel\Application\Tenant\AI\GPT\Models;
 
+use LookstarKernel\Application\Tenant\WeChat\Models\WeChatOpenid;
 use LookstarKernel\Support\Eloquent\TenantModel as Model;
 
 class Conversation extends Model
@@ -26,4 +27,9 @@ class Conversation extends Model
     protected $casts = [
         'source_documents' => 'json',
     ];
+
+    public function wechat()
+    {
+        return $this->hasOne(WeChatOpenid::class, 'openid', 'openid')->select(['appid', 'openid', 'nickname', 'avatar']);
+    }
 }
