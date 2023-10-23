@@ -17,6 +17,9 @@ class Config extends Model
         'description',
         'prompt',
         'preset_question',
+        'is_download',
+        'is_download_register',
+        'preset_question',
         'data',
         'data->share',
     ];
