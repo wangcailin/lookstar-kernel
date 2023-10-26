@@ -40,7 +40,8 @@ trait JobTrait
         if (empty($this->config['username_from'])) {
             $this->mail->setFrom("=?UTF-8?B?" . base64_encode($this->config['username']) . "?=");
         } else {
-            $this->mail->setFrom($this->config['username'], "=?UTF-8?B?" . base64_encode($this->config['username_from']) . "?=");
+            // $this->mail->setFrom($this->config['username'], "=?UTF-8?B?" . base64_encode($this->config['username_from']) . "?=");
+            $this->mail->setFrom($this->config['username'], $this->config['username_from']);
         }
     }
 
