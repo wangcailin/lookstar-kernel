@@ -22,10 +22,14 @@ class EmailConfig extends Model
         'send_type',
         'send_time',
         'content',
+        'fields_data',
     ];
 
     protected $casts = [
         'emails' => 'json',
         'cc_emails' => 'json',
+        'fields_data' => 'json',
     ];
+
+    public $jsonCasts = ['emails', 'cc_emails', 'fields_data'];
 }
