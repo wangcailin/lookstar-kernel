@@ -20,7 +20,7 @@ class EmailService
     public function getEmailContent($config, $project, $projectFiled, $projectContactModel)
     {
         $mailContent = '';
-        $configFieldsData = json_decode($config['fields_data'] ?? '', true);
+        $configFieldsData = $this->getArr($config['fields_data'] ?? '');
         if (!$project || !$configFieldsData) {
             return $mailContent;
         }
@@ -38,13 +38,15 @@ class EmailService
         //添加活动名称
         $mailContent .= !empty($project['title']) ? "项目名称：" . $project['title'] . "<br/>" : '';
         //添加活动字段
+        $projectContactData = $this->getArr($projectContactModel['data']);
         if (!empty($configFieldsData['fields']) && $projectFiled && $projectFiled['data']) {
+            $projectFiled['data'] = $this->getArr($projectFiled['data']);
             foreach ($projectFiled['data'] as $data) {
                 $fieldName = $data['name'] ?? '';
                 if (!in_array($fieldName, $configFieldsData['fields'])) {
                     continue;
                 }
-                $fieldValue = $projectContactModel['data'][$fieldName] ?? '';
+                $fieldValue = $projectContactData[$fieldName] ?? '';
                 if (!$fieldValue) {
                     continue;
                 }
@@ -79,7 +81,7 @@ class EmailService
                         $fieldValue = $wechatAuthorizer['nick_name'];
                     }
                 } else {
-                    $fieldValue = ($projectContactModel['source'][$systemField] ?? '') ?: ($projectContactModel['data'][$systemField] ?? '');
+                    $fieldValue = ($projectContactModel['source'][$systemField] ?? '') ?: ($projectContactData[$systemField] ?? '');
                 }
                 if (!$fieldValue) {
                     continue;
@@ -88,5 +90,14 @@ class EmailService
             }
         }
         return $mailContent;
+    }
+
+    public function getArr($arrOrString)
+    {
+        $res = $arrOrString;
+        if (is_string($arrOrString)) {
+            $res = json_decode($arrOrString, true);
+        }
+        return $res;
     }
 }
