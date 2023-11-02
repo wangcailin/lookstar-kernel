@@ -8,11 +8,18 @@ use LookstarKernel\Application\Tenant\Project\Contacts\Models\EmailLogs;
 
 class EmailService
 {
-    public function getEmailContent($config, $projectContactModel)
+    /**
+     * 获得发送邮件的邮件内容
+     *
+     * @param [type] $config 邮件配置 arr
+     * @param [type] $project 项目 arr
+     * @param [type] $projectFiled 项目字段 arr
+     * @param [type] $projectContactModel 项目联系人信息 arr
+     * @return void
+     */
+    public function getEmailContent($config, $project, $projectFiled, $projectContactModel)
     {
         $mailContent = '';
-        $projectId = $config['project_id'] ?? '';
-        $project = (array) DB::table('tenant_project')->where('id', $projectId)->first();
         $configFieldsData = json_decode($config['fields_data'] ?? '', true);
         if (!$project || !$configFieldsData) {
             return $mailContent;
@@ -31,9 +38,8 @@ class EmailService
         //添加活动名称
         $mailContent .= !empty($project['title']) ? "项目名称：" . $project['title'] . "<br/>" : '';
         //添加活动字段
-        $field = (array) DB::table('tenant_project_contacts_fields')->where(['project_id' => $projectId])->first();
-        if (!empty($configFieldsData['fields']) && $field && $field['data']) {
-            foreach ($field['data'] as $data) {
+        if (!empty($configFieldsData['fields']) && $projectFiled && $projectFiled['data']) {
+            foreach ($projectFiled['data'] as $data) {
                 $fieldName = $data['name'] ?? '';
                 if (!in_array($fieldName, $configFieldsData['fields'])) {
                     continue;
