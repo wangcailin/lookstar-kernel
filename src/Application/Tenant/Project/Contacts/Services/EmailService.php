@@ -61,6 +61,7 @@ class EmailService
         }
 
         if (!empty($configFieldsData['system_fields'])) {
+            $projectContactModel['source'] = $this->getArr($projectContactModel['source']);
             $systemFieldArr = [
                 'utm_campaign' => '活动名称',
                 'utm_source' => '广告来源',
