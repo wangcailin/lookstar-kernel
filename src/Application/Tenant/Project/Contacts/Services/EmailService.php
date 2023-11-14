@@ -61,7 +61,6 @@ class EmailService
         }
 
         if (!empty($configFieldsData['system_fields'])) {
-            $projectContactModel['source'] = $this->getArr($projectContactModel['source']);
             $systemFieldArr = [
                 'utm_campaign' => '活动名称',
                 'utm_source' => '广告来源',
@@ -74,6 +73,7 @@ class EmailService
                 'offiaccount' => '公众号',
             ];
             foreach ($configFieldsData['system_fields'] as $systemField) {
+                $projectContactModel['source'] = $this->getArr($projectContactModel['source']);
                 $fieldValue = '';
                 if ($systemField == 'offiaccount') {
                     $appid = $projectContactModel['source']['appid'] ?? '';
