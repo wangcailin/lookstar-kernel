@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Tenant\Analytics\Models;
+namespace LookstarKernel\Application\Tenant\Analytics\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
