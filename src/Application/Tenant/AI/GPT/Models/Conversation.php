@@ -4,6 +4,7 @@ namespace LookstarKernel\Application\Tenant\AI\GPT\Models;
 
 use LookstarKernel\Application\Tenant\WeChat\Models\WeChatOpenid;
 use LookstarKernel\Support\Eloquent\TenantModel as Model;
+use Carbon\Carbon;
 
 class Conversation extends Model
 {
@@ -31,5 +32,10 @@ class Conversation extends Model
     public function wechat()
     {
         return $this->hasOne(WeChatOpenid::class, 'openid', 'openid')->select(['appid', 'openid', 'nickname', 'avatar']);
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i:s');
     }
 }
