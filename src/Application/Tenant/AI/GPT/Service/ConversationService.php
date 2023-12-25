@@ -26,7 +26,7 @@ class ConversationService
         $url = '';
         switch ($type) {
             case Project::TYPE_WECHAT:
-                $url = '/app/gpt/wechat';
+                $url = '/app/gpt/wechat/stream';
                 break;
             case Project::TYPE_SALES:
                 $url = '/app/gpt/sales';
