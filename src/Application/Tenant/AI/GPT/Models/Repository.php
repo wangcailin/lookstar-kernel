@@ -13,6 +13,7 @@ class Repository extends Model
         'tenant_id',
         'project_id',
         'repository_id',
+        'old_repository_id',
         'state',
     ];
 
