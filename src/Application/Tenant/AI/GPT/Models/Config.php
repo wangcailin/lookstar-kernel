@@ -19,6 +19,7 @@ class Config extends Model
         'preset_question',
         'is_download',
         'is_download_register',
+        'repository_project',
         'preset_question',
         'data',
         'data->share',
