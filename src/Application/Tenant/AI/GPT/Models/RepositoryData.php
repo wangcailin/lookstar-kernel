@@ -23,6 +23,7 @@ class RepositoryData extends Model
     protected $fillable = [
         'tenant_id',
         'project_id',
+        'source_project_id',
         'openid',
         'type',
         'source_type',
