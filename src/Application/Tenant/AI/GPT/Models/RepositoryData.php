@@ -11,10 +11,10 @@ class RepositoryData extends Model
     const SOURCE_TYPE_WECHAT_FREPUBLISH = 'wechat_freepublish';
     const SOURCE_TYPE_UPLOAD = 'upload';
 
-    const UPLOAD_HTML = '/app/gpt/wechat/files/html';
-    const UPLOAD_FILE = '/app/gpt/wechat/files/url';
-    const DELETE_URL = '/app/gpt/wechat/files/url';
-    const DELETE_FILES = '/app/gpt/wechat/files';
+    const UPLOAD_HTML = '/app/gpt/repository/files/html';
+    const UPLOAD_FILE = '/app/gpt/repository/files/url';
+    const DELETE_URL = '/app/gpt/repository/files/url';
+    const DELETE_FILES = '/app/gpt/repository/files';
 
     const TRANSFORM_WORD_URL = '/app/gpt/documents/transform/word';
 
