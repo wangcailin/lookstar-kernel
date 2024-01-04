@@ -12,6 +12,7 @@ class RepositoryData extends Model
     const SOURCE_TYPE_UPLOAD = 'upload';
     const SOURCE_TYPE_CREATE = 'create';
 
+    const UPLOAD_PREFIX_URL = '/app/gpt/repository/';
     const UPLOAD_HTML = '/app/gpt/repository/files/html';
     const UPLOAD_FILE = '/app/gpt/repository/files/url';
     const DELETE_URL = '/app/gpt/repository/files/url';
