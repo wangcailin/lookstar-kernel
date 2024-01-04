@@ -36,7 +36,7 @@ class RepositoryData extends Model
         'state',
         'tag_ids_download',
         'lookstar_score_download',
-        'data',
+        'content',
     ];
 
     protected $casts = [
