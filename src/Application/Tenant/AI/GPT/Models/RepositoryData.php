@@ -10,6 +10,7 @@ class RepositoryData extends Model
 
     const SOURCE_TYPE_WECHAT_FREPUBLISH = 'wechat_freepublish';
     const SOURCE_TYPE_UPLOAD = 'upload';
+    const SOURCE_TYPE_CREATE = 'create';
 
     const UPLOAD_HTML = '/app/gpt/repository/files/html';
     const UPLOAD_FILE = '/app/gpt/repository/files/url';
@@ -34,6 +35,7 @@ class RepositoryData extends Model
         'state',
         'tag_ids_download',
         'lookstar_score_download',
+        'data',
     ];
 
     protected $casts = [
