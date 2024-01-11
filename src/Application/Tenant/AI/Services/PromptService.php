@@ -24,6 +24,9 @@ class PromptService
         $promptTemplate = $model['prompt'] ?? '';
         foreach ($params as $key => $value) {
             // 大小写不敏感的
+            if (is_array($value)) {
+                $value = implode('，', $value);
+            }
             $promptTemplate = str_ireplace($key, $value, $promptTemplate);
         }
         return $promptTemplate;
