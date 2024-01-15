@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Prompt extends Model
 {
-    protected $table = 'ai-prompt';
+    protected $table = 'ai_prompt';
 
     protected $fillable = [
         'prompt',
