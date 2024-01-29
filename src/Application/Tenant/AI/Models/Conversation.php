@@ -14,5 +14,6 @@ class Conversation extends Model
         'prompt_id',
         'openid',
         'distinct_id',
+        'source',
     ];
 }
