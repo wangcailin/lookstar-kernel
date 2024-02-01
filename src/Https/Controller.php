@@ -23,9 +23,7 @@ class Controller extends ComposerController
      */
     public function buildFilter()
     {
-        if ($this->departmentPermission) {
-            $this->queryDepartmentPermission();
-        }
+        $this->queryDepartmentPermission();
         $this->model = QueryBuilder::for($this->model)
             ->defaultSorts($this->defaultSorts)
             ->allowedFilters($this->allowedFilters)
@@ -147,12 +145,14 @@ class Controller extends ComposerController
      */
     public function queryDepartmentPermission()
     {
-        $user = $this->getCurrentUser();
-        if ($this->departmentPermission && !($user['is_admin'] ?? '')) {
-            //非管理员  同部门的用户
-            $departmentId = $this->getUserDepartmentId($user);
-            if ($departmentId) {
-                $this->model = $this->model->where('department_id', $departmentId);
+        if ($this->departmentPermission) {
+            $user = $this->getCurrentUser();
+            if (!($user['is_admin'] ?? '')) {
+                //非管理员  同部门的用户
+                $departmentId = $this->getUserDepartmentId($user);
+                if ($departmentId) {
+                    $this->model = $this->model->where('department_id', $departmentId);
+                }
             }
         }
     }
