@@ -207,15 +207,11 @@ class Controller extends ComposerController
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
-        return [
-            $validateField => [
-                'required',
-                tenant()->unique($modelString, $validateField)
-                    ->when(!$isAdmin, function ($query) use ($departmentId) {
-                        $query->where($this->departmentIdField, $departmentId);
-                    }),
-            ],
-        ];
+        return
+            tenant()->unique($modelString, $validateField)
+            ->when(!$isAdmin, function ($query) use ($departmentId) {
+                $query->where($this->departmentIdField, $departmentId);
+            });
     }
 
     /**
@@ -230,15 +226,11 @@ class Controller extends ComposerController
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
-        return [
-            $validateField => [
-                'required',
-                tenant()->unique($modelString, $validateField)
-                    ->ignore($this->id)
-                    ->when(!$isAdmin, function ($query) use ($departmentId) {
-                        $query->where($this->departmentIdField, $departmentId);
-                    }),
-            ]
-        ];
+        return
+            tenant()->unique($modelString, $validateField)
+            ->ignore($this->id)
+            ->when(!$isAdmin, function ($query) use ($departmentId) {
+                $query->where($this->departmentIdField, $departmentId);
+            });
     }
 }
