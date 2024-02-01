@@ -196,31 +196,26 @@ class Controller extends ComposerController
     }
 
     /**
-     * 验证创建数据
+     * 获得验证唯一字段的规则
      *
      * @param [type] $modelString
      * @param [type] $validateField
      * @return void
      */
-    public function doValidate($modelString, $validateField)
+    public function getUniqueFieldValidate($modelString, $validateField)
     {
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
-        Validator::make(
-            $this->data,
-            [
-                $validateField => [
-                    'required',
-                    tenant()->unique($modelString, $validateField)
-                        ->when(!$isAdmin, function ($query) use ($departmentId) {
-                            $query->where($this->departmentIdField, $departmentId);
-                        }),
-                ],
-                'type' => 'required',
+        return [
+            $validateField => [
+                'required',
+                tenant()->unique($modelString, $validateField)
+                    ->when(!$isAdmin, function ($query) use ($departmentId) {
+                        $query->where($this->departmentIdField, $departmentId);
+                    }),
             ],
-            $this->validateMessage
-        )->validate();
+        ];
     }
 
     /**
@@ -230,24 +225,20 @@ class Controller extends ComposerController
      * @param [type] $validateField
      * @return void
      */
-    public function doUpdateValidate($modelString, $validateField)
+    public function getUpdateUniqueFieldValidate($modelString, $validateField)
     {
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
-        Validator::make(
-            $this->data,
-            [
-                $validateField => [
-                    'required',
-                    tenant()->unique($modelString, $validateField)
-                        ->ignore($this->id)
-                        ->when(!$isAdmin, function ($query) use ($departmentId) {
-                            $query->where($this->departmentIdField, $departmentId);
-                        }),
-                ]
-            ],
-            $this->validateMessage
-        )->validate();
+        return [
+            $validateField => [
+                'required',
+                tenant()->unique($modelString, $validateField)
+                    ->ignore($this->id)
+                    ->when(!$isAdmin, function ($query) use ($departmentId) {
+                        $query->where($this->departmentIdField, $departmentId);
+                    }),
+            ]
+        ];
     }
 }
