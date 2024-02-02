@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Composer\Http\Controller as ComposerController;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
 class Controller extends ComposerController
@@ -67,7 +68,12 @@ class Controller extends ComposerController
             $this->row = $this->model::findOrFail($this->id);
         } else {
             $departmentId = $this->getUserDepartmentId($user);
-            $this->row = $this->model::where($this->departmentIdField, $departmentId)->findOrFail($this->id);
+            $isJsonType = $this->isDepartmentIdJsonType();
+            if ($isJsonType) {
+                $this->row = $this->model::whereJsonContains($this->departmentIdField, $departmentId)->findOrFail($this->id);
+            } else {
+                $this->row = $this->model::where($this->departmentIdField, $departmentId)->findOrFail($this->id);
+            }
         }
 
         if ($this->row) {
@@ -87,7 +93,12 @@ class Controller extends ComposerController
             $this->model::findOrFail($this->id)->delete();
         } else {
             $departmentId = $this->getUserDepartmentId($user);
-            $this->model::where($this->departmentIdField, $departmentId)->findOrFail($this->id)->delete();
+            $isJsonType = $this->isDepartmentIdJsonType();
+            if ($isJsonType) {
+                $this->model::whereJsonContains($this->departmentIdField, $departmentId)->findOrFail($this->id)->delete();
+            } else {
+                $this->model::where($this->departmentIdField, $departmentId)->findOrFail($this->id)->delete();
+            }
         }
     }
 
@@ -124,7 +135,12 @@ class Controller extends ComposerController
      */
     public function createDepartmentId()
     {
-        $this->data[$this->departmentIdField] = $this->getUserDepartmentId();
+        $isJsonType = $this->isDepartmentIdJsonType();
+        if ($isJsonType) {
+            $this->data[$this->departmentIdField][] = $this->getUserDepartmentId();
+        } else {
+            $this->data[$this->departmentIdField] = $this->getUserDepartmentId();
+        }
     }
 
     /**
@@ -148,10 +164,15 @@ class Controller extends ComposerController
         if ($this->departmentPermission) {
             $user = $this->getCurrentUser();
             if (!($user['is_admin'] ?? '')) {
+                $isJsonType = $this->isDepartmentIdJsonType();
                 //非管理员  同部门的用户
                 $departmentId = $this->getUserDepartmentId($user);
                 if ($departmentId) {
-                    $this->model = $this->model->where('department_id', $departmentId);
+                    if ($isJsonType) {
+                        $this->model = $this->model->whereJsonContains($this->departmentIdField, $departmentId);
+                    } else {
+                        $this->model = $this->model->where($this->departmentIdField, $departmentId);
+                    }
                 }
             }
         }
@@ -207,10 +228,15 @@ class Controller extends ComposerController
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
+        $isJsonType = $this->isDepartmentIdJsonType();
         return
             tenant()->unique($modelString, $validateField)
-            ->when(!$isAdmin, function ($query) use ($departmentId) {
-                $query->where($this->departmentIdField, $departmentId);
+            ->when(!$isAdmin, function ($query) use ($departmentId, $isJsonType) {
+                if ($isJsonType) {
+                    $query->whereJsonContains($this->departmentIdField, $departmentId);
+                } else {
+                    $query->where($this->departmentIdField, $departmentId);
+                }
             });
     }
 
@@ -226,11 +252,27 @@ class Controller extends ComposerController
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
+        $isJsonType = $this->isDepartmentIdJsonType();
         return
             tenant()->unique($modelString, $validateField)
             ->ignore($this->id)
-            ->when(!$isAdmin, function ($query) use ($departmentId) {
-                $query->where($this->departmentIdField, $departmentId);
+            ->when(!$isAdmin, function ($query) use ($departmentId, $isJsonType) {
+                if ($isJsonType) {
+                    $query->whereJsonContains($this->departmentIdField, $departmentId);
+                } else {
+                    $query->where($this->departmentIdField, $departmentId);
+                }
             });
+    }
+
+    /**
+     * 检查 department_id 是否为 JSON 类型
+     *
+     * @return bool
+     */
+    protected function isDepartmentIdJsonType()
+    {
+        return Schema::hasColumn($this->model->getTable(), $this->departmentIdField) &&
+            ($this->model->getCasts()[$this->departmentIdField] ?? '') === 'json';
     }
 }
