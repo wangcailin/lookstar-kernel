@@ -16,6 +16,7 @@ class Controller extends ComposerController
      */
     public $departmentPermission = true;
     public $departmentIdField = 'department_id';
+    public $originalModel;
 
     /**
      * 给 filter 添加部门权限
@@ -272,7 +273,15 @@ class Controller extends ComposerController
      */
     protected function isDepartmentIdJsonType()
     {
-        return Schema::hasColumn($this->model->getTable(), $this->departmentIdField) &&
-            ($this->model->getCasts()[$this->departmentIdField] ?? '') === 'json';
+        $tableName = method_exists($this->originalModel, 'getTable') ? $this->originalModel->getTable() : null;
+        if (!$tableName) {
+            return false;
+        }
+        $getCasts = method_exists($this->originalModel, 'getCasts') ? $this->originalModel->getCasts() : null;
+        if (!$getCasts) {
+            return false;
+        }
+        return Schema::hasColumn($tableName, $this->departmentIdField) &&
+            $getCasts[$this->departmentIdField] ?? '' === 'json';
     }
 }
