@@ -282,6 +282,6 @@ class Controller extends ComposerController
             return false;
         }
         return Schema::hasColumn($tableName, $this->departmentIdField) &&
-            $getCasts[$this->departmentIdField] ?? '' === 'json';
+            ($getCasts[$this->departmentIdField] ?? '') === 'json';
     }
 }
