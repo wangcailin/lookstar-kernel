@@ -211,7 +211,7 @@ class Controller extends ComposerController
         if (!$user) {
             $user = $this->getCurrentUser();
         }
-        if ($user->roles) {
+        if ($user && $user->roles) {
             $departmentId = $user->roles->first()->id;
         }
         return $departmentId;
