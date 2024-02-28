@@ -15,7 +15,7 @@ class Controller extends ComposerController
      * 查询的时候是否启用 部门权限字段
      */
     public $departmentPermission = true;
-    public $departmentIdField = 'department_id';
+    public $departmentIdField = 'role_id';
     public $originalModel;
 
     /**
