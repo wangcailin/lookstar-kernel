@@ -4,10 +4,6 @@ namespace LookstarKernel\Https;
 
 use Illuminate\Support\Facades\Auth;
 use Composer\Http\Controller as ComposerController;
-use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Validator;
 
 class Controller extends ComposerController
 {
@@ -30,7 +26,7 @@ class Controller extends ComposerController
     public function queryAuthRoleId()
     {
         if ($this->authRoleId && $this->guard) {
-            $user = Auth::guard($this->guard)->user();
+            $user = $this->getCurrentUser();
             if ($user['is_admin'] != 1) {
                 $authRoleId = $user->roles[0]['id'];
                 $this->model->where('auth_role_id', $authRoleId);
@@ -46,8 +42,7 @@ class Controller extends ComposerController
     public function createAuthRoleId()
     {
         if ($this->guard) {
-            $user = Auth::guard($this->guard)->user();
-            $authRoleId = $user->roles[0]['id'];
+            $authRoleId = $this->getAuthRoleId();
             $this->data['auth_role_id'] = $authRoleId;
         }
     }
@@ -76,6 +71,13 @@ class Controller extends ComposerController
     {
         $user = $this->getCurrentUser();
         $this->data['auth_user_id'] = $user ? $user->id : '';
+    }
+
+    public function getAuthRoleId()
+    {
+        $user = $this->getCurrentUser();
+        $authRoleId = $user->roles[0]['id'];
+        return $authRoleId;
     }
 
 
