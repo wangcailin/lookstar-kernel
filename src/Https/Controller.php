@@ -46,7 +46,8 @@ class Controller extends ComposerController
     public function createAuthRoleId()
     {
         if ($this->guard) {
-            $authRoleId = Auth::guard($this->guard)->roles[0]['id'];
+            $user = Auth::guard($this->guard)->user();
+            $authRoleId = $user->roles[0]['id'];
             $this->data['auth_role_id'] = $authRoleId;
         }
     }
