@@ -29,9 +29,12 @@ class Controller extends ComposerController
 
     public function queryAuthRoleId()
     {
-        if ($this->authRoleId) {
-            $authRoleId = Auth::guard($this->guard)->roles[0]['id'];
-            $this->model->where('auth_role_id', $authRoleId);
+        if ($this->authRoleId && $this->guard) {
+            $user = Auth::guard($this->guard)->user();
+            if ($user['is_admin'] != 1) {
+                $authRoleId = $user->roles[0]['id'];
+                $this->model->where('auth_role_id', $authRoleId);
+            }
         }
     }
 
