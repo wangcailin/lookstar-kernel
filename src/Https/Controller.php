@@ -16,6 +16,7 @@ class Controller extends ComposerController
      */
     public $departmentPermission = true;
     public $departmentIdField = 'role_id';
+    public $departmentIdFieldIsJson = 0;
     public $originalModel;
 
     /**
@@ -23,62 +24,41 @@ class Controller extends ComposerController
      *
      * @return void
      */
-    public function buildFilter()
+    public function beforeBuildFilter()
     {
         $this->queryDepartmentPermission();
-        $this->model = QueryBuilder::for($this->model)
-            ->defaultSorts($this->defaultSorts)
-            ->allowedFilters($this->allowedFilters)
-            ->allowedSorts($this->allowedSorts)
-            ->allowedIncludes($this->allowedIncludes);
     }
 
     /**
-     * 创建数据
+     * 格式化创建数据
      *
      * @return void
      */
-    public function create()
+    public function creatDataTransform()
     {
-        $this->data = request()->all();
         if ($this->authUserId) {
             $this->createAuthUserId();
         }
         if ($this->departmentPermission) {
             $this->createDepartmentId();
         }
-
-        $this->handleCreateValidate();
-
-        $this->beforeCreate();
-        $this->handleCreate();
-        $this->afterCreate();
-
-        return $this->success($this->row);
     }
 
     /**
-     * 更新数据 核心方法
+     * 更新数据 前置方法
      *
      * @return void
      */
-    public function handleUpdate()
+    public function beforeUpdate()
     {
         $user = $this->getCurrentUser();
-        if ($user->is_admin) {
-            $this->row = $this->model::findOrFail($this->id);
-        } else {
+        if (!$user->is_admin) {
             $departmentId = $this->getUserDepartmentId($user);
-            $isJsonType = $this->isDepartmentIdJsonType();
-            if ($isJsonType) {
-                $this->row = $this->model::whereJsonContains($this->departmentIdField, $departmentId)->findOrFail($this->id);
+            if ($this->departmentIdFieldIsJson) {
+                $this->model = $this->model->whereJsonContains($this->departmentIdField, $departmentId);
             } else {
-                $this->row = $this->model::where($this->departmentIdField, $departmentId)->findOrFail($this->id);
+                $this->model = $this->model->where($this->departmentIdField, $departmentId);
             }
-        }
-
-        if ($this->row) {
-            $this->row->update($this->data);
         }
     }
 
@@ -87,32 +67,26 @@ class Controller extends ComposerController
      *
      * @return void
      */
-    public function handleDelete()
+    public function beforeDelete()
     {
         $user = $this->getCurrentUser();
-        if ($user->is_admin) {
-            $this->model::findOrFail($this->id)->delete();
-        } else {
+        if (!$user->is_admin) {
             $departmentId = $this->getUserDepartmentId($user);
-            $isJsonType = $this->isDepartmentIdJsonType();
-            if ($isJsonType) {
-                $this->model::whereJsonContains($this->departmentIdField, $departmentId)->findOrFail($this->id)->delete();
+            if ($this->departmentIdFieldIsJson) {
+                $this->model = $this->model->whereJsonContains($this->departmentIdField, $departmentId);
             } else {
-                $this->model::where($this->departmentIdField, $departmentId)->findOrFail($this->id)->delete();
+                $this->model = $this->model->where($this->departmentIdField, $departmentId);
             }
         }
     }
 
     /**
-     * 获取单行数据
+     * 获取单个数据 格式化数据
      *
-     * @param [type] $id
      * @return void
      */
-    public function get($id)
+    public function getDataTransform()
     {
-        $this->id = $id;
-
         if ($this->authUserId) {
             $this->createAuthUserId();
         }
@@ -120,12 +94,6 @@ class Controller extends ComposerController
             $this->createDepartmentId();
             $this->queryDepartmentPermission();
         }
-
-        $this->beforeGet();
-        $this->handleGet();
-        $this->afterGet();
-
-        return $this->success($this->row);
     }
 
 
@@ -136,8 +104,7 @@ class Controller extends ComposerController
      */
     public function createDepartmentId()
     {
-        $isJsonType = $this->isDepartmentIdJsonType();
-        if ($isJsonType) {
+        if ($this->departmentIdFieldIsJson) {
             $this->data[$this->departmentIdField][] = $this->getUserDepartmentId();
         } else {
             $this->data[$this->departmentIdField] = $this->getUserDepartmentId();
@@ -165,11 +132,10 @@ class Controller extends ComposerController
         if ($this->departmentPermission) {
             $user = $this->getCurrentUser();
             if (!($user['is_admin'] ?? '')) {
-                $isJsonType = $this->isDepartmentIdJsonType();
                 //非管理员  同部门的用户
                 $departmentId = $this->getUserDepartmentId($user);
                 if ($departmentId) {
-                    if ($isJsonType) {
+                    if ($this->departmentIdFieldIsJson) {
                         $this->model = $this->model->whereJsonContains($this->departmentIdField, $departmentId);
                     } else {
                         $this->model = $this->model->where($this->departmentIdField, $departmentId);
@@ -186,16 +152,10 @@ class Controller extends ComposerController
      */
     public function getCurrentUser()
     {
-        $userId = Auth::id();
-        $cacheKey = 'backendUser_' . $userId;
-        $user = Cache::get($cacheKey);
-        if (!$user) {
-            if ($this->guard) {
-                $user = Auth::guard($this->guard)->user();
-            } else {
-                $user = Auth::user();
-            }
-            Cache::put($cacheKey, $user, now()->addMinutes(30));
+        if ($this->guard) {
+            $user = Auth::guard($this->guard)->user();
+        } else {
+            $user = Auth::user();
         }
         return $user;
     }
@@ -229,7 +189,7 @@ class Controller extends ComposerController
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
-        $isJsonType = $this->isDepartmentIdJsonType();
+        $isJsonType = $this->departmentIdFieldIsJson;
         return
             tenant()->unique($modelString, $validateField)
             ->when(!$isAdmin, function ($query) use ($departmentId, $isJsonType) {
@@ -253,7 +213,7 @@ class Controller extends ComposerController
         $departmentId = $this->getUserDepartmentId();
         $currentUser = $this->getCurrentUser();
         $isAdmin = $currentUser ? $currentUser->is_admin : 0;
-        $isJsonType = $this->isDepartmentIdJsonType();
+        $isJsonType = $this->departmentIdFieldIsJson;
         return
             tenant()->unique($modelString, $validateField)
             ->ignore($this->id)
@@ -264,24 +224,5 @@ class Controller extends ComposerController
                     $query->where($this->departmentIdField, $departmentId);
                 }
             });
-    }
-
-    /**
-     * 检查 department_id 是否为 JSON 类型
-     *
-     * @return bool
-     */
-    protected function isDepartmentIdJsonType()
-    {
-        $tableName = method_exists($this->originalModel, 'getTable') ? $this->originalModel->getTable() : null;
-        if (!$tableName) {
-            return false;
-        }
-        $getCasts = method_exists($this->originalModel, 'getCasts') ? $this->originalModel->getCasts() : null;
-        if (!$getCasts) {
-            return false;
-        }
-        return Schema::hasColumn($tableName, $this->departmentIdField) &&
-            ($getCasts[$this->departmentIdField] ?? '') === 'json';
     }
 }
