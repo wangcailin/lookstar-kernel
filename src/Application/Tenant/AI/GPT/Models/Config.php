@@ -2,6 +2,7 @@
 
 namespace LookstarKernel\Application\Tenant\AI\GPT\Models;
 
+use App\Application\Tenant\Project\Models\Project;
 use LookstarKernel\Support\Eloquent\TenantModel as Model;
 
 class Config extends Model
@@ -29,4 +30,9 @@ class Config extends Model
         'data' => 'object',
         'preset_question' => 'array',
     ];
+
+    public function project()
+    {
+        return $this->hasOne(Project::class, 'id', 'project_id');
+    }
 }
