@@ -24,6 +24,7 @@ class Conversation extends Model
         'openid',
         'is_timeout_reply',
         'distinct_id',
+        'is_true',
     ];
     protected $casts = [
         'source_documents' => 'json',
