@@ -27,7 +27,7 @@ class Controller extends ComposerController
     {
         if ($this->authRoleId) {
             $user = $this->getCurrentUser();
-            if ($user['is_admin'] != 1) {
+            if ($user && $user['is_admin'] != 1) {
                 $authRoleId = $user->roles[0]['id'];
                 $this->model = $this->model->where('auth_role_id', $authRoleId);
             }
@@ -73,8 +73,11 @@ class Controller extends ComposerController
 
     public function getAuthRoleId()
     {
+        $authRoleId = '';
         $user = $this->getCurrentUser();
-        $authRoleId = $user->roles[0]['id'];
+        if ($user) {
+            $authRoleId = $user->roles[0]['id'];
+        }
         return $authRoleId;
     }
 
