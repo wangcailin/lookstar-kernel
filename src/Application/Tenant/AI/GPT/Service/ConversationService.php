@@ -140,23 +140,33 @@ class ConversationService
         $fields = ['role', 'duty', 'language', 'character_limit', 'tone'];
         foreach ($fields as $field) {
             if (!empty($promptConfigData[$field]) && $promptConfigData[$field]) {
-                if ($field == 'tone' && ($promptConfigData[$field] == '其他')) {
+                $fieldName = '';
+                if ($field == 'character_limit') {
+                    $fieldName = '回复长度';
+                } else if ($field == 'tone' && ($promptConfigData[$field] == '其他')) {
                     $promptConfigData[$field] = $promptConfigData['tone_other'];
+                } else if ($field == 'language') {
+                    $fieldName = '回复语言';
+                    // if ($promptConfigData[$field] == 'English') {
+                    // $promptConfigData['回复语言'] = "请用英文回答问题";
+                    // }
+                    // if ($promptConfigData[$field] == 'AskLanguage') {
+                    $promptConfigData[$field] = "按提问问题的语种进行回复，英文问题使用英文回复，中文问题使用中文回复";
+                    // }
+                } else if ($field == 'tone') {
+                    $promptConfigData[$field] = $promptConfigData[$field];
+                    $fieldName = '回复语气';
+                } else if ($field == 'role') {
+                    $fieldName = '角色';
+                } else if ($field == 'duty') {
+                    $fieldName = '任务';
                 }
-                if ($field == 'language') {
-                    if ($promptConfigData[$field] == 'English') {
-                        $promptConfigData[$field] = "请用英文回答问题";
-                    }
-                }
-                if ($field == 'tone') {
-                    $promptConfigData[$field] = "回复语气使用" . $promptConfigData[$field];
-                }
-                $fieldName = ucwords(str_replace('_', ' ', $field));
-                $prompts[] = $fieldName . ':' . $promptConfigData[$field];
+
+                $prompts[] = $fieldName . '：' . $promptConfigData[$field];
             }
         }
         if ($promptConfigData['do_not']['status'] ?? '') {
-            $forbidden = 'DO NOT:';
+            $forbidden = '禁止回复的话题：';
             foreach ($promptConfigData['do_not']['keyword'] as $keyword) {
                 if (!empty($keyword['text'])) {
                     $forbidden .= $keyword['text'] . '，';
