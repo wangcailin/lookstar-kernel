@@ -14,6 +14,7 @@ class Template extends Model
         'type',
         'body',
         'edit_json',
+        'auth_role_id',
     ];
 
     public $appends = ['last_send_time'];
